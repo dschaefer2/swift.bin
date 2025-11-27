@@ -1,0 +1,7 @@
+stage_dir=~/swift/swiftpm/stage
+cmd=$1
+shift
+
+set -x
+
+swift ${cmd} --experimental-prebuilts-download-url file://${stage_dir} --experimental-prebuilts-root-cert ${stage_dir}/TestRootCA.cer $*

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+branch=$1
+if [ -z "$branch" ]; then
+    branch="main"
+fi
+
+latest=$(curl -s https://www.swift.org/api/v1/install/dev/${branch}/macos.json | jq '.universal | max_by(.date)')
+
+dir=$(echo ${latest} | jq -r '.dir')
+
+tcDir=~/Library/Developer/Toolchains
+latestDir=${tcDir}/${dir}.xctoolchain
+
+if [ -d ${latestDir} ]; then
+    echo ${dir} already installed
+    exit 0
+else
+    echo installing ${dir}
+fi
+
+pkg=$(echo ${latest} | jq -r '.download')
+pkgtmp=${pkg}.tmp
+
+mkdir -p ${tcDir}
+curl -L https://download.swift.org/development/xcode/${dir}/${pkg} > ${tcDir}/${pkg}
+pkgutil --expand ${tcDir}/${pkg} ${tcDir}/${pkgtmp}
+mkdir -p ${latestDir}
+tar xf ${tcDir}/${pkgtmp}/${dir}-osx-package.pkg/Payload -C ${latestDir}
+rm -fr ${tcDir}/${pkg} ${tcDir}/${pkgtmp}

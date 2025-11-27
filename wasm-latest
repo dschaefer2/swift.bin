@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+branch=$1
+if [ -z "$branch" ]; then
+    branch="main"
+fi
+
+latest=$(curl -s https://www.swift.org/api/v1/install/dev/${branch}/wasm-sdk.json | jq 'max_by(.date)')
+
+dir=$(echo ${latest} | jq -r '.dir')
+
+sdkDir=~/Library/org.swift.swiftpm/swift-sdks
+latestDir=${sdkDir}/${dir}_wasm.artifactbundle
+
+if [ -d ${latestDir} ]; then
+    echo ${dir} already installed
+    exit 0
+else
+    echo installing ${dir}
+fi
+
+pkg=$(echo ${latest} | jq -r '.download')
+pkgtmp=${pkg}.tmp
+
+mkdir -p ${sdkDir}
+curl -L https://download.swift.org/development/wasm-sdk/${dir}/${pkg} > ${sdkDir}/${pkg}
+tar xf ${sdkDir}/${pkg}
+rm ${sdkDir}/${pkg}
+

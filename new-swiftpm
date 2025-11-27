@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "usage: $0 <name> <branch>"
+    exit 1
+else
+    name=$1
+    if [ -n "$2" ]; then
+        branch=$2
+    else
+        branch=main
+    fi
+fi
+
+mkdir -p $name.xcworkspace
+cd $name.xcworkspace
+
+git clone -b $branch https://github.com/swiftlang/swift-llbuild
+git -C swift-llbuild remote add work git@github.com:dschaefer2/swift-llbuild
+git clone -b $branch https://github.com/swiftlang/swift-build
+git -C swift-build remote add work git@github.com:dschaefer2/swift-build
+git clone -b $branch https://github.com/swiftlang/swift-package-manager swiftpm
+git -C swiftpm remote add work git@github.com:dschaefer2/swift-package-manager
+
+cat > contents.xcworkspacedata <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "container:$1.xcworkspace/swift-llbuild">
+   </FileRef>
+   <FileRef
+      location = "container:$1.xcworkspace/swift-build">
+   </FileRef>
+   <FileRef
+      location = "container:$1.xcworkspace/swiftpm">
+   </FileRef>
+</Workspace>
+EOF
+

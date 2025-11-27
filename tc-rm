@@ -1,0 +1,8 @@
+die() {
+    echo $*
+    exit 1
+}
+
+[ -n "$1" ] || die usage: $0 '<toochain dir>'
+
+rm -fr ~/Library/Developer/Toochains/$*

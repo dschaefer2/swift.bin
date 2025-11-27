@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -e
+
+version=$1
+if [ -z "$version" ]; then
+    echo "usage: $0 <version>"
+    exit 1
+fi
+
+release=swift-${version}-RELEASE
+tcDir=~/Library/Developer/Toolchains
+releaseDir=${tcDir}/${release}.xctoolchain
+
+if [ -d ${releaseDir} ]; then
+    echo ${release} already installed
+    exit 0
+else
+    echo installing ${release}
+fi
+
+pkg=${release}-osx.pkg
+pkgtmp=${pkg}.tmp
+
+mkdir -p ${tcDir}
+curl -L https://download.swift.org/swift-${version}-release/xcode/${release}/${pkg} > ${tcDir}/${pkg}
+pkgutil --expand ${tcDir}/${pkg} ${tcDir}/${pkgtmp}
+mkdir -p ${releaseDir}
+tar xf ${tcDir}/${pkgtmp}/${release}-osx-package.pkg/Payload -C ${releaseDir}
+rm -fr ${tcDir}/${pkg} ${tcDir}/${pkgtmp}

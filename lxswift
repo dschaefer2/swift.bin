@@ -1,0 +1,2 @@
+mkdir -p ~/.swiftpm-lx
+container run -it --rm -m 8G -v $(pwd):/build -v ~/.swiftpm-lx:/root/.swiftpm -w /build lxswift $*
