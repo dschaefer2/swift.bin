@@ -19,8 +19,10 @@ git clone -b $branch https://github.com/swiftlang/swift-llbuild
 git -C swift-llbuild remote add work git@github.com:dschaefer2/swift-llbuild
 git clone -b $branch https://github.com/swiftlang/swift-build
 git -C swift-build remote add work git@github.com:dschaefer2/swift-build
-git clone -b $branch https://github.com/swiftlang/swift-package-manager swiftpm
-git -C swiftpm remote add work git@github.com:dschaefer2/swift-package-manager
+git clone -b $branch https://github.com/swiftlang/swift-package-manager
+git -C swift-package-manager remote add work git@github.com:dschaefer2/swift-package-manager
+git clone -b $branch https://github.com/swiftlang/sourcekit-lsp
+git -C sourcekit-lsp remote add work git@github.com:dschaefer2/sourcekit-lsp
 
 cat > contents.xcworkspacedata <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -33,7 +35,10 @@ cat > contents.xcworkspacedata <<EOF
       location = "container:$1.xcworkspace/swift-build">
    </FileRef>
    <FileRef
-      location = "container:$1.xcworkspace/swiftpm">
+      location = "container:$1.xcworkspace/swift-package-manager">
+   </FileRef>
+   <FileRef
+      location = "container:$1.xcworkspace/sourcekit-lsp">
    </FileRef>
 </Workspace>
 EOF
