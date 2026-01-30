@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "usage: $0 <name> <branch>"
+    exit 1
+else
+    name=$1
+    if [ -n "$2" ]; then
+        branch=$2
+    else
+        branch=main
+    fi
+fi
+
+mkdir $name
+cd $name
+
+git clone -b $branch https://github.com/swiftlang/swift-package-manager swiftpm
+cd swiftpm
+git remote add work git@github.com:dschaefer2/swift-package-manager
+gh repo set-default swiftlang/swift-package-manager
+cd ..

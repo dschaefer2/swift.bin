@@ -12,34 +12,51 @@ else
     fi
 fi
 
-mkdir -p $name.xcworkspace
-cd $name.xcworkspace
+mkdir $name
+cd $name
 
 git clone -b $branch https://github.com/swiftlang/swift-llbuild
-git -C swift-llbuild remote add work git@github.com:dschaefer2/swift-llbuild
+cd swift-llbuild
+git remote add work git@github.com:dschaefer2/swift-llbuild
+gh repo set-default swiftlang/swift-llbuild
+cd ..
+
 git clone -b $branch https://github.com/swiftlang/swift-build
-git -C swift-build remote add work git@github.com:dschaefer2/swift-build
+cd swift-build
+git remote add work git@github.com:dschaefer2/swift-build
+gh repo set-default swiftlang/swift-build
+cd ..
+
 git clone -b $branch https://github.com/swiftlang/swift-package-manager
-git -C swift-package-manager remote add work git@github.com:dschaefer2/swift-package-manager
+cd swift-package-manager
+git remote add work git@github.com:dschaefer2/swift-package-manager
+gh repo set-default swiftlang/swift-package-manager
+cd ..
+
 git clone -b $branch https://github.com/swiftlang/sourcekit-lsp
-git -C sourcekit-lsp remote add work git@github.com:dschaefer2/sourcekit-lsp
+cd sourcekit-lsp
+git remote add work git@github.com:dschaefer2/sourcekit-lsp
+gh repo set-default swiftlang/sourcekit-lsp
+cd ..
+
+mkdir -p $name.xcworkspace
+cd $name.xcworkspace
 
 cat > contents.xcworkspacedata <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
    <FileRef
-      location = "container:$1.xcworkspace/swift-llbuild">
+      location = "group:swift-llbuild">
    </FileRef>
    <FileRef
-      location = "container:$1.xcworkspace/swift-build">
+      location = "group:swift-build">
    </FileRef>
    <FileRef
-      location = "container:$1.xcworkspace/swift-package-manager">
+      location = "group:swift-package-manager">
    </FileRef>
    <FileRef
-      location = "container:$1.xcworkspace/sourcekit-lsp">
+      location = "group:sourcekit-lsp">
    </FileRef>
 </Workspace>
 EOF
-

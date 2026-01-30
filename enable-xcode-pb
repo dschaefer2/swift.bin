@@ -1,0 +1,5 @@
+#!/bin/bash
+stage_dir=~/swift/swiftpm/stage
+
+defaults write com.apple.dt.Xcode IDEPackagePrebuiltsDownloadURL file://${stage_dir}
+defaults write com.apple.dt.Xcode IDEPackagePrebuiltsRootCert ${stage_dir}/TestRootCA.cer

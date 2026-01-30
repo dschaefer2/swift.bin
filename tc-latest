@@ -5,6 +5,9 @@ set -e
 branch=$1
 if [ -z "$branch" ]; then
     branch="main"
+    urlPrefix="https://download.swift.org/development/xcode"
+else
+    urlPrefix="https://download.swift.org/swift-${branch}-branch/xcode"
 fi
 
 latest=$(curl -s https://www.swift.org/api/v1/install/dev/${branch}/macos.json | jq '.universal | max_by(.date)')
@@ -25,8 +28,10 @@ pkg=$(echo ${latest} | jq -r '.download')
 pkgtmp=${pkg}.tmp
 
 mkdir -p ${tcDir}
-curl -L https://download.swift.org/development/xcode/${dir}/${pkg} > ${tcDir}/${pkg}
+curl -L ${urlPrefix}/${dir}/${pkg} > ${tcDir}/${pkg}
 pkgutil --expand ${tcDir}/${pkg} ${tcDir}/${pkgtmp}
 mkdir -p ${latestDir}
 tar xf ${tcDir}/${pkgtmp}/${dir}-osx-package.pkg/Payload -C ${latestDir}
 rm -fr ${tcDir}/${pkg} ${tcDir}/${pkgtmp}
+ln -sf ${latestDir} ${tcDir}/latest
+

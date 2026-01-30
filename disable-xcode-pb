@@ -1,0 +1,4 @@
+#!/bin/bash
+
+defaults delete com.apple.dt.Xcode IDEPackagePrebuiltsDownloadURL
+defaults delete com.apple.dt.Xcode IDEPackagePrebuiltsRootCert
