@@ -1,0 +1,62 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "usage: $0 <name> <branch>"
+    exit 1
+else
+    name=$1
+    if [ -n "$2" ]; then
+        branch=$2
+    else
+        branch=main
+    fi
+fi
+
+mkdir $name
+cd $name
+
+git clone -b $branch https://github.com/swiftlang/swift-llbuild
+cd swift-llbuild
+git remote add work git@github.com:dschaefer2/swift-llbuild
+gh repo set-default swiftlang/swift-llbuild
+cd ..
+
+git clone -b $branch https://github.com/swiftlang/swift-build
+cd swift-build
+git remote add work git@github.com:dschaefer2/swift-build
+gh repo set-default swiftlang/swift-build
+cd ..
+
+git clone -b $branch https://github.com/swiftlang/swift-package-manager
+cd swift-package-manager
+git remote add work git@github.com:dschaefer2/swift-package-manager
+gh repo set-default swiftlang/swift-package-manager
+cd ..
+
+git clone -b $branch https://github.com/swiftlang/sourcekit-lsp
+cd sourcekit-lsp
+git remote add work git@github.com:dschaefer2/sourcekit-lsp
+gh repo set-default swiftlang/sourcekit-lsp
+cd ..
+
+mkdir -p $name.xcworkspace
+cd $name.xcworkspace
+
+cat > contents.xcworkspacedata <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:swift-llbuild">
+   </FileRef>
+   <FileRef
+      location = "group:swift-build">
+   </FileRef>
+   <FileRef
+      location = "group:swift-package-manager">
+   </FileRef>
+   <FileRef
+      location = "group:sourcekit-lsp">
+   </FileRef>
+</Workspace>
+EOF

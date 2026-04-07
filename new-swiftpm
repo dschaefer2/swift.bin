@@ -1,48 +1,34 @@
-#!/bin/bash
+#!/bin/bash -e
 
-if [ -z "$1" ]; then
-    echo "usage: $0 <name> <branch>"
+if [ $# -lt 2 ]; then
+    echo "usage: $0 <source> <name> [<src-branch>]"
     exit 1
+fi
+
+source=$1
+name=$2
+
+if [ -n "$3" ]; then
+    branch=$3
 else
-    name=$1
-    if [ -n "$2" ]; then
-        branch=$2
-    else
-        branch=main
-    fi
+    branch=main
 fi
 
 mkdir $name
-cd $name
 
-git clone -b $branch https://github.com/swiftlang/swift-llbuild
-cd swift-llbuild
-git remote add work git@github.com:dschaefer2/swift-llbuild
-gh repo set-default swiftlang/swift-llbuild
-cd ..
+make-wt() {
+    git -C $source/$1 worktree prune
+    git -C $source/$1 worktree add -b $name $(pwd)/$name/$1 $branch
+}
 
-git clone -b $branch https://github.com/swiftlang/swift-build
-cd swift-build
-git remote add work git@github.com:dschaefer2/swift-build
-gh repo set-default swiftlang/swift-build
-cd ..
+make-wt swift-llbuild
+make-wt swift-build
+make-wt swift-package-manager
+make-wt sourcekit-lsp
 
-git clone -b $branch https://github.com/swiftlang/swift-package-manager
-cd swift-package-manager
-git remote add work git@github.com:dschaefer2/swift-package-manager
-gh repo set-default swiftlang/swift-package-manager
-cd ..
+mkdir -p $name/$name.xcworkspace
 
-git clone -b $branch https://github.com/swiftlang/sourcekit-lsp
-cd sourcekit-lsp
-git remote add work git@github.com:dschaefer2/sourcekit-lsp
-gh repo set-default swiftlang/sourcekit-lsp
-cd ..
-
-mkdir -p $name.xcworkspace
-cd $name.xcworkspace
-
-cat > contents.xcworkspacedata <<EOF
+cat > $name/$name.xcworkspace/contents.xcworkspacedata <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">

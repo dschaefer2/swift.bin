@@ -1,0 +1,14 @@
+image=$1
+arch=$2
+
+stage_dir=~/swift/swiftpm/stage
+[ -f $stage_dir ] || cp Fixtures/Signing/Certificates/TestRootCA.cer $stage_dir/TestRootCA.cer
+
+container run -it --rm -m 8G --arch $arch \
+    -v $(pwd):/build \
+    -v ~/.swiftpm-lx:/home/build-user/.swiftpm \
+    -v ~/swift/swiftpm/stage:/stage \
+    -w /build \
+    $image \
+    swift run swift-build-prebuilts --stage-dir /stage --build --test-signing --version 602.0.0 --version 603.0.0
+

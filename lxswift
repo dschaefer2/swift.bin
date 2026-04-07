@@ -1,2 +1,5 @@
+tag=$1
+shift
 mkdir -p ~/.swiftpm-lx
-container run -it --rm -m 8G -v $(pwd):/build -v ~/.swiftpm-lx:/root/.swiftpm -w /build lxswift $*
+container run -it --rm -m 8G -v $(pwd):/build -v ~/.swiftpm-lx:/home/build-user/.swiftpm -w /build lxswift:$tag $*
+
