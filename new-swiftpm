@@ -1,15 +1,15 @@
 #!/bin/bash -e
 
-if [ $# -lt 2 ]; then
-    echo "usage: $0 <source> <name> [<src-branch>]"
+if [ $# -lt 1 ]; then
+    echo "usage: $0 <name> [<src-branch>]"
     exit 1
 fi
 
-source=$1
-name=$2
+source=bare
+name=$1
 
-if [ -n "$3" ]; then
-    branch=$3
+if [ -n "$2" ]; then
+    branch=$2
 else
     branch=main
 fi
@@ -17,11 +17,10 @@ fi
 mkdir $name
 
 make-wt() {
-    git -C $source/$1 worktree prune
-    git -C $source/$1 worktree add -b $name $(pwd)/$name/$1 $branch
+    git -C $source/$1.git worktree prune
+    git -C $source/$1.git worktree add -b $name $(pwd)/$name/$1 $branch
 }
 
-make-wt swift-llbuild
 make-wt swift-build
 make-wt swift-package-manager
 make-wt sourcekit-lsp
@@ -32,9 +31,6 @@ cat > $name/$name.xcworkspace/contents.xcworkspacedata <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
-   <FileRef
-      location = "group:swift-llbuild">
-   </FileRef>
    <FileRef
       location = "group:swift-build">
    </FileRef>

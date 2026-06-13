@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+sdk=$1
+build=$2
+if [ -z "$build" ]; then
+    echo "usage: sdk-latest <sdk> <build>"
+    exit 1
+fi
+
+record=$(curl -s https://www.swift.org/api/v1/install/dev/main/${sdk}-sdk.json | jq ".[] | select(.dir == \"${build}\")")
+if [ -z "$record" ]; then
+    echo "sdk not found"
+    exit 1
+fi
+
+download=$(echo ${record} | jq -r '.download')
+url=https://download.swift.org/development/${sdk}-sdk/${build}/${download}
+sdkDir=~/Library/org.swift.swiftpm/swift-sdks
+mkdir -p ${sdkDir}
+curl -L ${url} | tar -C ${sdkDir} -xf -
+

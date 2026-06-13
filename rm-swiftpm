@@ -1,22 +1,19 @@
-#!/bin/bash -e
+#!/bin/bash
 
-if [ $# -lt 2 ]; then
-    echo "usage: $0 <source> <name>"
+if [ $# -lt 1 ]; then
+    echo "usage: $0 <source>"
     exit 1
 fi
 
-source=$1
-name=$2
+source=bare
+name=$1
 
 rm-wt() {
     echo $1
-    if [ -d $name/$1 ]; then
-        git -C $source/$1 worktree remove $(pwd)/$name/$1
-    fi
-    git -C $source/$1 branch -D $name
+    git -C $source/$1.git worktree remove $(pwd)/$name/$1
+    git -C $source/$1.git branch -D $name
 }
 
-rm-wt swift-llbuild
 rm-wt swift-build
 rm-wt swift-package-manager
 rm-wt sourcekit-lsp

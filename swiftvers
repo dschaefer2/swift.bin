@@ -1,6 +1,6 @@
 for i in /Library/Developer/Toolchains/*.xctoolchain ~/Library/Developer/Toolchains/*.xctoolchain
 do
     if [ -d $i ]; then
-        echo $(plutil -extract CFBundleIdentifier raw $i/Info.plist) $(basename $i)
+        echo $(plutil -extract CFBundleIdentifier raw $i/Info.plist) $(basename -s .xctoolchain $i)
     fi
 done
