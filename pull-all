@@ -4,12 +4,10 @@ if [ -n "$1" ]; then
     branch=$1
 fi
 
-git -C swift-llbuild fetch origin
 git -C swift-build fetch origin
 git -C swift-package-manager fetch origin
 git -C sourcekit-lsp fetch origin
 
-git -C swift-llbuild pull --rebase origin $branch
 git -C swift-build pull --rebase origin $branch
 git -C swift-package-manager pull --rebase origin $branch
 git -C sourcekit-lsp pull --rebase origin $branch

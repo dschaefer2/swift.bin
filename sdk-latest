@@ -5,19 +5,29 @@ set -e
 sdk=$1
 build=$2
 if [ -z "$build" ]; then
-    echo "usage: sdk-latest <sdk> <build>"
+    echo "usage: sdk-latest <sdk> <build> <branch>"
     exit 1
 fi
 
-record=$(curl -s https://www.swift.org/api/v1/install/dev/main/${sdk}-sdk.json | jq ".[] | select(.dir == \"${build}\")")
+branch=main
+urlPrefix=development
+if [ -n "$3" ]; then
+    branch=$3
+    urlPrefix=swift-$3-branch
+fi
+
+json=$(curl -s https://www.swift.org/api/v1/install/dev/${branch}/${sdk}-sdk.json)
+record=$(echo -n $json | jq ".[] | select(.dir == \"${build}\")")
 if [ -z "$record" ]; then
-    echo "sdk not found"
+    echo "sdk not found. Builds available:"
+    echo $json | jq ".[] | .dir"
     exit 1
 fi
 
 download=$(echo ${record} | jq -r '.download')
-url=https://download.swift.org/development/${sdk}-sdk/${build}/${download}
+url=https://download.swift.org/${urlPrefix}/${sdk}-sdk/${build}/${download}
 sdkDir=~/Library/org.swift.swiftpm/swift-sdks
 mkdir -p ${sdkDir}
+echo ${url}
 curl -L ${url} | tar -C ${sdkDir} -xf -
 
