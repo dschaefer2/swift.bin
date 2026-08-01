@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+
+version=$1
+sdk=$2
+if [ -z "$sdk" ]; then
+    echo "usage: $0 <version> <sdk>"
+    exit 1
+fi
+
+release=swift-${version}-RELEASE
+sdkDir=~/Library/org.swift.swiftpm/swift-sdks
+sdkPkg=${release}_${sdk}.artifactbundle.tar.gz
+
+if [ -d ${sdkDir}/${sdkPkg} ]; then
+    echo ${sdkPkg} already installed
+    exit 0
+else
+    echo installing ${sdkPkg}
+fi
+
+mkdir -p ${sdkDir}
+curl -L https://download.swift.org/swift-${version}-release/${sdk}-sdk/${release}/${sdkPkg} > ${sdkDir}/${sdkPkg}
+tar -xf ${sdkDir}/${sdkPkg} -C ${sdkDir}
+rm ${sdkDir}/${sdkPkg}

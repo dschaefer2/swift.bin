@@ -1,0 +1,5 @@
+#!/bin/bash
+
+git -C swift-build.git fetch origin
+git -C swift-package-manager.git fetch origin
+git -C sourcekit-lsp.git fetch origin
