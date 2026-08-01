@@ -1,0 +1,44 @@
+name=$(basename *.xcworkspace .xcworkspace)
+src=$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain
+dest=~/Library/Developer/Toolchains/${name}.xctoolchain
+derivedData=~/Library/Developer/Xcode/DerivedData/${name}-*/Build/Intermediates.noindex/InstallIntermediates/macosx/Products/Debug
+
+if [ -z "$derivedData" ]; then
+   echo run from the worktree directory
+   exit 1
+fi
+
+if [ ! -d $src ]; then
+   echo Source toolchain not found: $src
+   exit 1
+fi
+
+if [ ! -d $derivedData ]; then
+   echo Derived data not found: $derivedData
+   exit 1
+fi
+
+echo Creating $name.xctoolchain
+
+rm -fr $dest
+ditto $src $dest
+chmod -R -N $dest
+
+ditto $src/../../../SharedFrameworks/llbuild.framework $dest/usr/lib/swift/pm/llbuild/llbuild.framework
+
+rm $dest/ToolchainInfo.plist
+cp ~/Library/Developer/Toolchains/Info.plist $dest/Info.plist
+plutil -replace CFBundleIdentifier -string $name $dest/Info.plist
+
+for bin in swift-package swift-build swift-test sourcekit-lsp; do
+    ln -sf $derivedData/$bin $dest/usr/bin
+done
+
+rm -fr $dest/usr/lib/swift/pm/ManifestAPI/*
+ln -sf $derivedData/CompilerPluginSupport.swiftmodule $dest/usr/lib/swift/pm/ManifestAPI
+ln -sf $derivedData/PackageDescription.swiftmodule $dest/usr/lib/swift/pm/ManifestAPI
+ln -sf $derivedData/PackageDescription.framework $dest/usr/lib/swift/pm/ManifestAPI
+
+rm -fr $dest/usr/lib/swift/pm/PluginAPI/*
+ln -sf $derivedData/PackagePlugin.swiftmodule $dest/usr/lib/swift/pm/PluginAPI
+ln -sf $derivedData/PackagePlugin.framework $dest/usr/lib/swift/pm/PluginAPI
