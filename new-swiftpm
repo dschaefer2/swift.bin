@@ -15,21 +15,20 @@ else
 fi
 
 mkdir $name
+cd $name
 
-make-wt() {
-    git -C $source/$1.git worktree prune
-    git -C $source/$1.git worktree add -b $name $(pwd)/$name/$1 $branch
-    git -C $(pwd)/$name/$1 fetch origin $branch
-    git -C $(pwd)/$name/$1 rebase origin/$branch
+clone() {
+    git clone https://github.com/swiftlang/$1 -b $branch
+    git -C $1 checkout -b $name
 }
 
-make-wt swift-build
-make-wt swift-package-manager
-make-wt sourcekit-lsp
+clone swift-build
+clone swift-package-manager
+clone sourcekit-lsp
 
-mkdir -p $name/$name.xcworkspace
+mkdir -p $name.xcworkspace
 
-cat > $name/$name.xcworkspace/contents.xcworkspacedata <<EOF
+cat > $name.xcworkspace/contents.xcworkspacedata <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
