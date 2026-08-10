@@ -19,6 +19,8 @@ mkdir $name
 make-wt() {
     git -C $source/$1.git worktree prune
     git -C $source/$1.git worktree add -b $name $(pwd)/$name/$1 $branch
+    git -C $(pwd)/$name/$1 fetch origin $branch
+    git -C $(pwd)/$name/$1 rebase origin/$branch
 }
 
 make-wt swift-build

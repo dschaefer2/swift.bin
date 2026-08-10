@@ -1,7 +1,8 @@
 name=$(basename *.xcworkspace .xcworkspace)
 src=$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain
 dest=~/Library/Developer/Toolchains/${name}.xctoolchain
-derivedData=~/Library/Developer/Xcode/DerivedData/${name}-*/Build/Products/Debug
+#derivedData=~/Library/Developer/Xcode/DerivedData/${name}-*/Build/Products/Debug
+derivedData=~/Library/Developer/Xcode/DerivedData/${name}-*/Build/Intermediates.noindex/InstallIntermediates/macosx/Products/Debug
 
 if [ -z "$derivedData" ]; then
    echo run from the worktree directory
@@ -37,11 +38,11 @@ done
 rm -fr $dest/usr/lib/swift/pm/ManifestAPI/*
 ln -sf $derivedData/CompilerPluginSupport.swiftmodule $dest/usr/lib/swift/pm/ManifestAPI
 ln -sf $derivedData/PackageDescription.swiftmodule $dest/usr/lib/swift/pm/ManifestAPI
-ln -sf $derivedData/PackageFrameworks/PackageDescription.framework $dest/usr/lib/swift/pm/ManifestAPI
+ln -sf $derivedData/PackageDescription.framework $dest/usr/lib/swift/pm/ManifestAPI
 
 rm -fr $dest/usr/lib/swift/pm/PluginAPI/*
 ln -sf $derivedData/PackagePlugin.swiftmodule $dest/usr/lib/swift/pm/PluginAPI
-ln -sf $derivedData/PackageFrameworks/PackagePlugin.framework $dest/usr/lib/swift/pm/PluginAPI
+ln -sf $derivedData/PackagePlugin.framework $dest/usr/lib/swift/pm/PluginAPI
 
 TOOLCHAINS=$name swift --version
 TOOLCHAINS=$name swift build --version
