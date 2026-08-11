@@ -19,7 +19,11 @@ cd $name
 
 clone() {
     git clone https://github.com/swiftlang/$1 -b $branch
-    git -C $1 checkout -b $name
+    cd $1
+    git remote add work git@github.com:dschaefer2/$1
+    git checkout -b $name
+    gh repo set-default https://github.com/swiftlang/$1
+    cd ..
 }
 
 clone swift-build
