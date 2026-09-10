@@ -1,8 +1,13 @@
+if [ -z "$1" ]; then
+   src=$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain
+else
+   src=~/Library/Developer/Toolchains/$1.xctoolchain
+fi
+
 name=$(basename *.xcworkspace .xcworkspace)
-src=$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain
 dest=~/Library/Developer/Toolchains/${name}.xctoolchain
-#derivedData=~/Library/Developer/Xcode/DerivedData/${name}-*/Build/Products/Debug
-derivedData=~/Library/Developer/Xcode/DerivedData/${name}-*/Build/Intermediates.noindex/InstallIntermediates/macosx/Products/Debug
+derivedData=~/Library/Developer/Xcode/DerivedData/${name}-*/Build/Products/Debug
+#derivedData=~/Library/Developer/Xcode/DerivedData/${name}-*/Build/Intermediates.noindex/InstallIntermediates/macosx/Products/Debug
 
 if [ -z "$derivedData" ]; then
    echo run from the worktree directory
@@ -25,9 +30,10 @@ rm -fr $dest
 ditto $src $dest
 chmod -R -N $dest
 
-ditto $src/../../../SharedFrameworks/llbuild.framework $dest/usr/lib/swift/pm/llbuild/llbuild.framework
+ditto $(xcode-select -p)/../SharedFrameworks/llbuild.framework $dest/usr/lib/llbuild.framework
 
-rm $dest/ToolchainInfo.plist
+rm -f $dest/ToolchainInfo.plist
+rm -fr $dest/_CodeSignature
 cp ~/Library/Developer/Toolchains/Info.plist $dest/Info.plist
 plutil -replace CFBundleIdentifier -string $name $dest/Info.plist
 
@@ -38,11 +44,11 @@ done
 rm -fr $dest/usr/lib/swift/pm/ManifestAPI/*
 ln -sf $derivedData/CompilerPluginSupport.swiftmodule $dest/usr/lib/swift/pm/ManifestAPI
 ln -sf $derivedData/PackageDescription.swiftmodule $dest/usr/lib/swift/pm/ManifestAPI
-ln -sf $derivedData/PackageDescription.framework $dest/usr/lib/swift/pm/ManifestAPI
+ln -sf $derivedData/PackageFrameworks/PackageDescription.framework $dest/usr/lib/swift/pm/ManifestAPI
 
 rm -fr $dest/usr/lib/swift/pm/PluginAPI/*
 ln -sf $derivedData/PackagePlugin.swiftmodule $dest/usr/lib/swift/pm/PluginAPI
-ln -sf $derivedData/PackagePlugin.framework $dest/usr/lib/swift/pm/PluginAPI
+ln -sf $derivedData/PackageFrameworks/PackagePlugin.framework $dest/usr/lib/swift/pm/PluginAPI
 
 TOOLCHAINS=$name swift --version
 TOOLCHAINS=$name swift build --version
