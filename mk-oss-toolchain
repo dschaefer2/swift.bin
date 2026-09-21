@@ -29,18 +29,14 @@ echo Creating $id.xctoolchain
 
 rm -fr $dest
 ditto $src $dest
-chmod -R -N $dest
-
-ditto $(xcode-select -p)/../SharedFrameworks/llbuild.framework $dest/usr/lib/llbuild.framework
 
 rm -f $dest/ToolchainInfo.plist
 rm -fr $dest/_CodeSignature
 cp ~/Library/Developer/Toolchains/Info.plist $dest/Info.plist
 plutil -replace CFBundleIdentifier -string $id $dest/Info.plist
 
-for bin in swift-package swift-build swift-test sourcekit-lsp; do
-    ln -sf $derivedData/$bin $dest/usr/bin
-done
+ln -sf $derivedData/swift-package-manager $dest/usr/bin/swift-package
+ln -sf $derivedData/sourcekit-lsp $dest/usr/bin/sourcekit-lsp
 
 rm -fr $dest/usr/lib/swift/pm/ManifestAPI/*
 ln -sf $derivedData/CompilerPluginSupport.swiftmodule $dest/usr/lib/swift/pm/ManifestAPI
